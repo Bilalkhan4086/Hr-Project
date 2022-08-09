@@ -6,24 +6,38 @@ import Post from './Post'
 const IndexPage = ({OrgData}) => {
     const [Data, setData] = useState([]);
     const [Search, setSearch] = useState('');
-    const [Sort,setSort] = useState(false);
+    const [Sort,setSort] = useState(null);
 
     const ApplySort = () =>{
-        setData(Data.sort((a,b)=>(new Date(b.date) - new Date(a.date))))
+        if(Sort){
+            setData(Data.sort((a,b)=>(new Date(b.date) - new Date(a.date))))
+        }
+        else{
+            setData(Data.sort((a,b)=>(new Date(a.date) - new Date(b.date))))
+        }
     }
     
-    const ApplyUnSort = () =>{
-        setData(Data.sort((a,b)=>(new Date(a.date) - new Date(b.date))))
-    }
 const ApplySearch = () =>{
     setData(OrgData.filter((data)=>(data.postText.toLowerCase().includes(Search.toLowerCase()))));
 }
 
 
-    useEffect(() => {
-ApplySearch();
-console.log("Search",Data)
-}, [Search])
+useEffect(()=>{
+    ApplySearch();
+    console.log("ApplySearch",Data)
+},[Search])
+
+useEffect(() => {
+    ApplySort();
+    if(Sort === null){
+        setData(OrgData);
+        setSort(true);
+    }
+    console.log("SortD",Data);
+    console.log("Sort",Sort)
+    }, [Sort])
+    
+
   return (
     <div>
         <nav style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
@@ -35,12 +49,7 @@ console.log("Search",Data)
         <div style={{display:"flex",width:"500px",margin:"auto",justifyContent:"space-around"}}>
         <h3>Filter :</h3><Button onClick={()=>{
             setSort(!Sort);
-        if(Sort){
-            ApplySort();
-        }
-        else{
-            ApplyUnSort();
-        }}}>{Sort ? "UnSort" : "Sort"}</Button>
+       }}>{Sort ? "Sort" : "UnSort"}</Button>
         </div>
         </nav>
         <div>
